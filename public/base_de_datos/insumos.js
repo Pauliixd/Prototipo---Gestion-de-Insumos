@@ -8,7 +8,7 @@ import {
   actualizarInsumo, 
   eliminarInsumo
 } from "./bd.js";
-import { crearTablaGeneral, filtrarTabla } from "./funciones.js";
+import { crearTablaGeneral, filtrarTabla, buscarInsumo } from "./funciones.js";
 
 import { alertaAdvertencia, alertaError, alertaExito } from "./alerts.js";
 
@@ -64,24 +64,21 @@ function crearBotoneraAcciones(insumo) {
 
 
 function renderizarTablaInsumos() {
-  insumosTablaBody.innerHTML = ""; // Limpiar tabla
-
+  insumosTablaBody.innerHTML = ""; 
   let insumos = obtenerInsumos();
-  const tablaCompleta = crearTablaGeneral(insumos, columnasInsumos, { 
+
+  // Obtener texto del buscador y aplicar filtro
+  let textoBusqueda = inputBuscar.value.trim();
+  let insumosFiltrados = buscarInsumo(insumos, textoBusqueda);
+
+  const tablaCompleta = crearTablaGeneral(insumosFiltrados, columnasInsumos, { 
     acciones: crearBotoneraAcciones 
   });
-  
-  // Reemplazar solo el tbody 
+
   const newTbody = tablaCompleta.querySelector('tbody');
-  // Se reemplaza solo el contenido, no el tbody completo si ya existe
-  if (insumosTablaBody) {
-    insumosTablaBody.innerHTML = newTbody.innerHTML; 
-  } else {
-    // Si la tabla no está bien estructurada, se agrega la tabla completa al padre
-    // En este caso, asumimos que el padre es donde se debe renderizar (el .table-responsive)
-    // Pero como tu HTML ya tiene el tbody con el ID, solo copiamos el contenido.
-  }
+  insumosTablaBody.innerHTML = newTbody.innerHTML; 
 }
+
 
 
 function abrirModalEditar(insumo) {
@@ -97,11 +94,12 @@ function abrirModalEditar(insumo) {
     modalEditar.show();
 }
 
-// EVENTOS
+
 
 // 1. Renderizar al cargar
 renderizarTablaInsumos();
 
+// EVENTOS
 
 // 2. Alta de Insumo: Itera según la cantidad ingresada
 formRegistroInsumo.addEventListener("submit", (e) => {
@@ -141,29 +139,4 @@ formRegistroInsumo.addEventListener("submit", (e) => {
   
 });
 
-
-// 3. Edición de Insumo (el formulario está en insumos.html)
-document.getElementById('formEditarInsumo').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const codigo = document.getElementById('editCodigo').value;
-    const nombre = document.getElementById('editNombre').value.trim();
-    // const categoria = document.getElementById('editCategoria').value; // Se elimina
-    const estado = document.getElementById('editEstado').value;
-    const observacion = document.getElementById('editObservacion').value.trim();
-
-    const insumoActualizado = {
-        codigo: document.getElementById('editCodigo').value,
-        nombre: document.getElementById('editNombre').value.trim(),
-        estado: document.getElementById('editEstado').value,
-        observacion: document.getElementById('editObservacion').value.trim(),
-    };
-
-    // Llama a la nueva función de actualización
-    actualizarInsumo(insumoActualizado);
-    renderizarTablaInsumos();
-    
-    const modalEditar = bootstrap.Modal.getInstance(document.getElementById('modalEditarInsumo'));
-    modalEditar.hide();
-    alertaExito('Edición exitosa', `El insumo "${nombre}" fue actualizado correctamente.`);
-});
+inputBuscar.addEventListener('input', renderizarTablaInsumos);

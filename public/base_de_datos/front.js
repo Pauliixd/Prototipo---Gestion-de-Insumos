@@ -170,7 +170,7 @@ formPrestamo.addEventListener("submit", (e) => {
   actualizarContadores();
   modalPrestamo.hide(); // Cierra el modal
 
-    alertaExito('Préstamo registrado','El préstamo se registró correctamente.')
+  alertaExito('Préstamo registrado','El préstamo se registró correctamente.')
 
 
 });
