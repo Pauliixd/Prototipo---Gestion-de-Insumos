@@ -49,9 +49,9 @@
   vertical-align: middle;
 }
 
-#insumosTabla tr:hover {
-  background-color: #fff4f4 !important;
-  transition: 0.3s;
+#insumosTabla tbody tr:hover td {
+  background-color: #e6e6e6 !important;
+  transition: background-color 0.3s;
 }
 
 .table-responsive {
@@ -62,19 +62,20 @@
 /*para la pantalla verUser*/
 
 /* Colores personalizados */
-.bg-rojo-suave {
-  background-color: #7388e5 !important;
-}
-
 .btn-rojo-suave {
-  background-color: #6c6cf1;
+  background-color: #d24c4c; /* Color principal del botón */
   color: #fff;
   border: none;
   transition: all 0.2s ease-in-out;
 }
 .btn-rojo-suave:hover {
-  background-color: #685de2;
+  background-color: #b13333; /* Color de hover */
   color: #fff;
+}
+
+/* NUEVA CLASE PARA FONDOS  */
+.bg-rojo-suave {
+  background-color: #efecec !important; /* Uso !important para asegurarme que sobrescribe Bootstrap :p */
 }
 
 /* Estilo tabla */
@@ -101,7 +102,8 @@
 }
 
 .table tbody tr:hover {
-  background-color: #fff2f2;
+  background-color: #bdb6b6 !important;
+  transition: background-color 0.2s ease-in-out;
 }
 
 /* Card contenedora */
@@ -138,14 +140,22 @@
 /* Acciones dentro de la tabla */
 .action-btn {
   border: none;
-  background: none;
-  color: #e57373;
+  background:#d44141 ;
+  color: #fbfbfb;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .action-btn:hover {
-  color: #d32f2f;
+  background: #931f1f;
+  color: #ffffff;
 }
+
+/* btn de gestion de prestamo */
+.btn-moroso{
+  background-color: #d24c4c;
+  color: #ffffff; 
+}
+
 
 

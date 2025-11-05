@@ -1,14 +1,16 @@
 // prestamos.js
 import { obtenerPrestamosPorEstado, actualizarEstadoPrestamo, marcarComoDevuelto } from "./bd.js";
-import { crearTablaGeneral } from "./funciones.js";
+import { crearTablaGeneral, buscarInsumo } from "./funciones.js";
 
 // ELEMENTOS HTML (asegurate que los IDs existan en tu prestamos.html)
 const contenedorActivos = document.getElementById("prestamosActivos");
 const contenedorMorosos = document.getElementById("prestamosMorosos");
 const contenedorHistorial = document.getElementById("prestamosHistorial");
+const inputBuscar = document.getElementById("inputBuscar");
 
 const columnas = [
-  { clave: "codigo", texto: "Código" },
+  // AHORA MUESTRA EL CODIGO DEL INSUMO
+  { clave: "codigoInsumo", texto: "Código de Insumo" }, 
   { clave: "insumo", texto: "Insumo" },
   { clave: "destinatario", texto: "Destinatario" },
   { clave: "fecha", texto: "Fecha" },
@@ -18,38 +20,55 @@ const columnas = [
 function renderizarTablas() {
   const { activos, morosos, devueltos } = obtenerPrestamosPorEstado();
 
+  const textoBusqueda = inputBuscar.value.trim().toLowerCase();
+
+  // filtra solo por destinatario
+  function filtrarPorDestinatario(lista) {
+    if (textoBusqueda === "") return lista;
+    return lista.filter(p => 
+      p.destinatario && p.destinatario.toLowerCase().includes(textoBusqueda)
+    );
+  }
+
+  const activosFiltrados = filtrarPorDestinatario(activos);
+  const morososFiltrados = filtrarPorDestinatario(morosos);
+  const devueltosFiltrados = filtrarPorDestinatario(devueltos);
+
+  // Limpiar contenedores
   contenedorActivos.innerHTML = "";
   contenedorMorosos.innerHTML = "";
   contenedorHistorial.innerHTML = "";
-
+  
   // ACTIVOS
-  if (activos.length > 0) {
+  if (activosFiltrados.length > 0) {
     contenedorActivos.appendChild(
-      crearTablaGeneral(activos, columnas, {
+      crearTablaGeneral(activosFiltrados, columnas, {
         acciones: (prestamo) => {
           const div = document.createElement("div");
+          div.className = "btn-group btn-group-sm";
 
           const btnDevolver = document.createElement("button");
           btnDevolver.className = "btn btn-success btn-sm";
           btnDevolver.textContent = "Marcar devuelto";
           btnDevolver.addEventListener("click", () => {
-            if (!confirm("Marcar este préstamo como devuelto?")) return;
-            marcarComoDevuelto(prestamo.codigo);
+            if (!confirm("¿Marcar este préstamo como devuelto?")) return;
+            // Usa el ID de TRANSACCIÓN para la gestión
+            marcarComoDevuelto(prestamo.idTransaccion); 
             renderizarTablas();
           });
 
           const btnMoroso = document.createElement("button");
-          btnMoroso.className = "btn btn-warning btn-sm ms-2";
+          btnMoroso.className = "btn btn-warning btn-sm";
           btnMoroso.textContent = "Marcar moroso";
           btnMoroso.addEventListener("click", () => {
-            if (!confirm("Marcar este préstamo como moroso?")) return;
-            actualizarEstadoPrestamo(prestamo.codigo, "moroso");
+             // Usa el ID de TRANSACCIÓN para la gestión
+            actualizarEstadoPrestamo(prestamo.idTransaccion, "moroso"); 
             renderizarTablas();
           });
 
           div.append(btnDevolver, btnMoroso);
           return div;
-        }
+        },
       })
     );
   } else {
@@ -57,16 +76,17 @@ function renderizarTablas() {
   }
 
   // MOROSOS
-  if (morosos.length > 0) {
+  if (morososFiltrados.length > 0) {
     contenedorMorosos.appendChild(
-      crearTablaGeneral(morosos, columnas, {
+      crearTablaGeneral(morososFiltrados, columnas, {
         acciones: (prestamo) => {
           const btnDevolver = document.createElement("button");
           btnDevolver.className = "btn btn-success btn-sm";
           btnDevolver.textContent = "Marcar devuelto";
           btnDevolver.addEventListener("click", () => {
-            if (!confirm("Marcar este préstamo como devuelto?")) return;
-            marcarComoDevuelto(prestamo.codigo);
+            if (!confirm("¿Marcar este préstamo como devuelto?")) return;
+            // Usa el ID de TRANSACCIÓN para la gestión
+            marcarComoDevuelto(prestamo.idTransaccion); 
             renderizarTablas();
           });
           return btnDevolver;
@@ -77,13 +97,18 @@ function renderizarTablas() {
     contenedorMorosos.innerHTML = "<p class='text-muted text-center'>No hay préstamos morosos.</p>";
   }
 
-  // HISTORIAL (devueltos)
-  if (devueltos.length > 0) {
-    contenedorHistorial.appendChild(crearTablaGeneral(devueltos, columnas));
+  // HISTORIAL
+  if (devueltosFiltrados.length > 0) {
+    contenedorHistorial.appendChild(crearTablaGeneral(devueltosFiltrados, columnas));
   } else {
-    contenedorHistorial.innerHTML = "<p class='text-muted text-center'>No hay préstamos devueltos.</p>";
+    contenedorHistorial.innerHTML = "<p class='text-muted text-center'>No hay historial de préstamos devueltos.</p>";
   }
 }
 
-// Inicializar
-document.addEventListener("DOMContentLoaded", renderizarTablas);
+// Renderizar al cargar
+renderizarTablas();
+
+// Evento de búsqueda
+inputBuscar.addEventListener("input", () => {
+  renderizarTablas();
+});

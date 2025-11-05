@@ -1,9 +1,18 @@
 // usuarios.js - Maneja el listado y acciones de la tabla de usuarios
 
-import { obtenerUsuarios, guardarUsuario, actualizarUsuario, eliminarUsuario } from "./bd.js"; 
+import { obtenerUsuarios, guardarUsuario, actualizarUsuario, eliminarUsuario } from "./bd.js";
+
+import { crearTablaGeneral } from "./funciones.js";
 
 // ELEMENTOS HTML
-const usuariosTableBody = document.getElementById("usuariosTable");
+const usuariosTableBody = document.getElementById("usuariosTableBody");
+
+const columnasUsuarios = [
+    { clave: "nombreYApellido", texto: "Nombre y Apellido" },
+    { clave: "dni", texto: "DNI" },
+    { clave: "email", texto: "Email" },
+    { clave: "cargo", texto: "Cargo" },
+];
 
 // FUNCIONES
 function crearBotoneraAcciones(usuario) {
@@ -35,34 +44,25 @@ function crearBotoneraAcciones(usuario) {
 }
 
 function renderizarTablaUsuarios() {
-    usuariosTableBody.innerHTML = "";
     const usuarios = obtenerUsuarios();
-
-    usuarios.forEach(user => {
-        const tr = document.createElement('tr');
+    
+    if (usuarios.length > 0) {
         
-        tr.innerHTML = `
-            <td>${user.nombreYApellido}</td>
-            <td>${user.dni}</td>
-            <td>${user.email}</td>
-            <td>${user.cargo}</td>
-            <td class="text-center"></td>
-        `;
+        const tablaCompleta = crearTablaGeneral(usuarios, columnasUsuarios, {
+            acciones: crearBotoneraAcciones
+        });
 
-        // Añadir la botonera de acciones
-        const tdAcciones = tr.querySelector('td:last-child');
-        tdAcciones.appendChild(crearBotoneraAcciones(user));
+        // crearTablaGeneral devuelve un TABLE, obtenemos su TBODY:
+        const newTbody = tablaCompleta.querySelector('tbody');
 
-        usuariosTableBody.appendChild(tr);
-    });
+        // Reemplazamos el contenido :)
+        usuariosTableBody.innerHTML = newTbody.innerHTML; 
+    } else {
+        usuariosTableBody.innerHTML = `<tr><td colspan="${columnasUsuarios.length + 1}" class="text-center text-muted">No hay usuarios registrados.</td></tr>`;
+    }
 }
 
-function abrirModalEditarUsuario(usuario) {
-    // Implementación del modal de edición de usuario
-    console.log("Abrir modal de edición para:", usuario.nombreYApellido);
-    // Este modal no está en el HTML, se requeriría crearlo si se implementa.
-    alert(`Editar usuario: ${usuario.nombreYApellido} (DNI: ${usuario.dni})`);
-}
+
 
 
 // EVENTOS

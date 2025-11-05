@@ -4,7 +4,6 @@
 import {
   obtenerInsumos,
   guardarInsumo,
-  obtenerSiguienteCodigo,
   actualizarInsumo, 
   eliminarInsumo
 } from "./bd.js";

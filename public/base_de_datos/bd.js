@@ -22,16 +22,34 @@ function obtenerArray(clave) {
   return datos ? datos : [];
 }
 
-export function obtenerSiguienteCodigo() {
-  return Math.floor(Math.random() * 1000000);
+// FUNCIÓN 1: CÓDIGO ALEATORIO (Para IDs de PRÉSTAMOS y Inicialización de Admin)
+export function obtenerCodigo() {
+  // Genera un ID de transacción aleatorio y único (para la gestión del préstamo)
+  return Math.floor(Math.random() * 1000000); 
 }
 
-// USUARIOS (sin cambios)
+// FUNCIÓN 2: CÓDIGO INCREMENTAL (Solo para Insumos, Usuarios y Destinatarios)
+export function obtenerSiguienteCodigo() {
+    const insumos = obtenerInsumos(); 
+    let maxCodigo = 0; // Inicializamos con 0
+
+    // Busca el código más alto solo en la lista de INSUMOS (según tu requisito)
+    for (let i = 0; i < insumos.length; i++) {
+        const codigoActual = insumos[i].codigo; 
+        if (codigoActual > maxCodigo) {
+            maxCodigo = codigoActual;
+        }
+    }
+    
+    return maxCodigo + 1;
+}
+
+// USUARIOS
 export function obtenerUsuarios() {
   let usuarios = obtenerArray(CLAVE_USUARIOS);
   if (usuarios.length === 0) {
     usuarios = [{
-      codigo: obtenerSiguienteCodigo(),
+      codigo: obtenerCodigo(), // <-- Usa el código ALEATORIO para el admin inicial
       dni: "0000",
       nombreYApellido: "Administrador General",
       email: "admin@isft12.edu.ar",
@@ -43,13 +61,15 @@ export function obtenerUsuarios() {
   }
   return usuarios;
 }
+
 export function guardarUsuario(usuario) {
   const usuarios = obtenerUsuarios();
-  usuario.codigo = obtenerSiguienteCodigo();
+  usuario.codigo = obtenerSiguienteCodigo(); // <-- Usa el INCREMENTAL
   usuarios.push(usuario);
   guardarArray(usuarios, CLAVE_USUARIOS);
   return usuario;
 }
+
 export function actualizarUsuario(usuarioActualizado) {
   let usuarios = obtenerUsuarios();
   const index = usuarios.findIndex(u => u.codigo == usuarioActualizado.codigo);
@@ -60,6 +80,7 @@ export function actualizarUsuario(usuarioActualizado) {
   }
   return false;
 }
+
 export function eliminarUsuario(codigo) {
   let usuarios = obtenerUsuarios();
   const usuariosFiltrados = usuarios.filter(u => u.codigo != codigo);
@@ -81,13 +102,15 @@ export function obtenerInsumos() {
   }
   return insumos;
 }
+
 export function guardarInsumo(insumo) {
   const insumos = obtenerInsumos();
-  insumo.codigo = obtenerSiguienteCodigo();
+  insumo.codigo = obtenerSiguienteCodigo(); // <-- Usa el INCREMENTAL
   insumos.push(insumo);
   guardarArray(insumos, CLAVE_INSUMOS);
   return insumo;
 }
+
 export function actualizarInsumo(insumoActualizado) {
   let insumos = obtenerInsumos();
   const index = insumos.findIndex(i => i.codigo == insumoActualizado.codigo);
@@ -98,6 +121,7 @@ export function actualizarInsumo(insumoActualizado) {
   }
   return false;
 }
+
 export function eliminarInsumo(codigo) {
   let insumos = obtenerInsumos();
   const insumosFiltrados = insumos.filter(i => i.codigo != codigo);
@@ -117,7 +141,12 @@ export function obtenerPrestamos() {
 
 export function guardarPrestamo(prestamo) {
   const prestamos = obtenerPrestamos();
-  prestamo.codigo = obtenerSiguienteCodigo();
+  
+  // 1. Asigna el ID de la TRANSACCIÓN (el ID ÚNICO interno)
+  prestamo.idTransaccion = obtenerCodigo(); // <-- Usa el código ALEATORIO para ID INTERNO
+  
+  // 2. El campo prestamo.codigoInsumo YA CONTIENE el código del insumo físico
+  
   prestamo.estado = prestamo.estado || "activo";
   prestamos.push(prestamo);
   guardarArray(prestamos, CLAVE_PRESTAMOS);
@@ -125,9 +154,10 @@ export function guardarPrestamo(prestamo) {
 }
 
 /** Actualiza el estado de un préstamo (activo|moroso|devuelto) */
-export function actualizarEstadoPrestamo(codigo, nuevoEstado) {
+export function actualizarEstadoPrestamo(idTransaccion, nuevoEstado) {
   const prestamos = obtenerPrestamos();
-  const index = prestamos.findIndex(p => p.codigo == codigo);
+  // Busca por el ID de la transacción
+  const index = prestamos.findIndex(p => p.idTransaccion == idTransaccion); 
   if (index !== -1) {
     prestamos[index].estado = nuevoEstado;
     guardarArray(prestamos, CLAVE_PRESTAMOS);
@@ -137,13 +167,18 @@ export function actualizarEstadoPrestamo(codigo, nuevoEstado) {
 }
 
 /** Marca como devuelto y libera el insumo correspondiente */
-export function marcarComoDevuelto(codigoPrestamo) {
+export function marcarComoDevuelto(idTransaccion) {
   const prestamos = obtenerPrestamos();
   const insumos = obtenerInsumos();
-  const prestamo = prestamos.find(p => p.codigo == codigoPrestamo);
+  // Busca por el ID de la transacción
+  const prestamo = prestamos.find(p => p.idTransaccion == idTransaccion); 
   if (!prestamo) return false;
+  
   prestamo.estado = "devuelto";
-  const insumo = insumos.find(i => i.codigo == prestamo.codigoInsumo);
+  
+  // Usa el código del insumo guardado en el préstamo para liberarlo.
+  const insumo = insumos.find(i => i.codigo == prestamo.codigoInsumo); 
+  
   if (insumo) insumo.estado = "Disponible";
   guardarArray(prestamos, CLAVE_PRESTAMOS);
   guardarArray(insumos, CLAVE_INSUMOS);
@@ -174,14 +209,15 @@ export function actualizarInsumosPrestados(insumosPrestados) {
 export function obtenerDestinatarios() {
   let destinatarios = obtenerArray(CLAVE_DESTINATARIOS);
   if (destinatarios.length === 0) {
-    destinatarios = [{ codigo: obtenerSiguienteCodigo(), nombreYApellido: "Sin asignar", cargo: "N/A" }];
+    destinatarios = [{ codigo: obtenerCodigo(), nombreYApellido: "Sin asignar", cargo: "N/A" }]; // <-- Usa el código ALEATORIO
     guardarArray(destinatarios, CLAVE_DESTINATARIOS);
   }
   return destinatarios;
 }
+
 export function guardarDestinatario(destinatario) {
   const destinatarios = obtenerDestinatarios();
-  destinatario.codigo = obtenerSiguienteCodigo();
+  destinatario.codigo = obtenerSiguienteCodigo(); // <-- Usa el INCREMENTAL
   destinatarios.push(destinatario);
   guardarArray(destinatarios, CLAVE_DESTINATARIOS);
   return destinatario;
