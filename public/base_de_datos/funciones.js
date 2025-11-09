@@ -1,66 +1,63 @@
 // funciones.js
 
-
 export function crearTablaGeneral(datos, columnas, opciones) {
-  const seleccionar = opciones && opciones.seleccionar ? true : false;
-  const acciones = opciones && opciones.acciones ? opciones.acciones : null;
+  const seleccionar = opciones && opciones.seleccionar;
+  const acciones = opciones && opciones.acciones;
 
   const tabla = document.createElement("table");
   tabla.className = "table table-hover align-middle";
 
   const thead = document.createElement("thead");
   const tbody = document.createElement("tbody");
-
   const trHead = document.createElement("tr");
 
+  // Encabezado de "Seleccionar"
   if (seleccionar) {
-    const thSel = document.createElement("th");
-    thSel.textContent = "Seleccionar";
-    trHead.appendChild(thSel);
+    const th = document.createElement("th");
+    th.textContent = "Seleccionar";
+    trHead.appendChild(th);
   }
 
+  // Encabezados de columnas
   for (let i = 0; i < columnas.length; i++) {
     const th = document.createElement("th");
     th.textContent = columnas[i].texto;
     trHead.appendChild(th);
   }
 
+  // Encabezado de "Acciones"
   if (acciones) {
-    const thAcc = document.createElement("th");
-    thAcc.textContent = "Acciones";
-    trHead.appendChild(thAcc);
+    const th = document.createElement("th");
+    th.textContent = "Acciones";
+    trHead.appendChild(th);
   }
 
   thead.appendChild(trHead);
 
+  // Filas de datos
   for (let i = 0; i < datos.length; i++) {
-    const item = datos[i];
     const tr = document.createElement("tr");
+    const item = datos[i];
 
     if (seleccionar) {
-      const tdSel = document.createElement("td");
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      tdSel.appendChild(checkbox);
-      tr.appendChild(tdSel);
+      const td = document.createElement("td");
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      td.appendChild(check);
+      tr.appendChild(td);
     }
 
     for (let j = 0; j < columnas.length; j++) {
-      const col = columnas[j];
       const td = document.createElement("td");
-      if (item[col.clave]) {
-        td.textContent = item[col.clave];
-      } else {
-        td.textContent = "";
-      }
+      const clave = columnas[j].clave;
+      td.textContent = item[clave] || "";
       tr.appendChild(td);
     }
 
     if (acciones) {
-      const tdAcc = document.createElement("td");
-      const nodoAccion = acciones(item);
-      tdAcc.appendChild(nodoAccion);
-      tr.appendChild(tdAcc);
+      const td = document.createElement("td");
+      td.appendChild(acciones(item));
+      tr.appendChild(td);
     }
 
     tbody.appendChild(tr);
@@ -68,7 +65,6 @@ export function crearTablaGeneral(datos, columnas, opciones) {
 
   tabla.appendChild(thead);
   tabla.appendChild(tbody);
-
   return tabla;
 }
 

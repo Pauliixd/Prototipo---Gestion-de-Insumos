@@ -1,4 +1,5 @@
 // prestamos.js
+
 import { obtenerPrestamosPorEstado, actualizarEstadoPrestamo, marcarComoDevuelto } from "./bd.js";
 import { crearTablaGeneral, buscarInsumo } from "./funciones.js";
 
@@ -9,13 +10,68 @@ const contenedorHistorial = document.getElementById("prestamosHistorial");
 const inputBuscar = document.getElementById("inputBuscar");
 
 const columnas = [
-  // AHORA MUESTRA EL CODIGO DEL INSUMO
+  // ... tus columnas ...
   { clave: "codigoInsumo", texto: "Código de Insumo" }, 
   { clave: "insumo", texto: "Insumo" },
   { clave: "destinatario", texto: "Destinatario" },
   { clave: "fecha", texto: "Fecha" },
   { clave: "estado", texto: "Estado" },
 ];
+
+
+
+/* boton con confirmación para Devolver (usamos idTransaccion) */
+function confirmarDevolucion(idTransaccion, insumoNombre) {
+    Swal.fire({
+        title: "¿Seguro de devolver?",
+        html: `Vas a marcar como devuelto el insumo <strong>${insumoNombre}</strong>.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#28a745", 
+        cancelButtonColor: "#dc3545", 
+        confirmButtonText: "Sí, devolver",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            marcarComoDevuelto(idTransaccion);
+            renderizarTablas();
+            Swal.fire({
+                title: "¡Devuelto!",
+                text: `El insumo ${insumoNombre} ha sido marcado como devuelto.`,
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
+/** boton de confirmación para Marcar Moroso (usamo idTransaccion) */
+function confirmarMoroso(idTransaccion, insumoNombre) {
+    Swal.fire({
+        title: "¿Marcar como Moroso?",
+        html: `Vas a marcar el préstamo de <strong>${insumoNombre}</strong> como moroso.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#28a745", 
+        cancelButtonColor: "#dc3545",
+        confirmButtonText: "Sí, Marcar Moroso",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            actualizarEstadoPrestamo(idTransaccion, "moroso");
+            renderizarTablas();
+            Swal.fire({
+                title: "¡Moroso!",
+                text: `${insumoNombre} ha sido movido a la sección de Morosos.`,
+                icon: "info",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
 
 function renderizarTablas() {
   const { activos, morosos, devueltos } = obtenerPrestamosPorEstado();
@@ -51,19 +107,15 @@ function renderizarTablas() {
           btnDevolver.className = "btn btn-success btn-sm";
           btnDevolver.textContent = "Marcar devuelto";
           btnDevolver.addEventListener("click", () => {
-            if (!confirm("¿Marcar este préstamo como devuelto?")) return;
-            // Usa el ID de TRANSACCIÓN para la gestión
-            marcarComoDevuelto(prestamo.idTransaccion); 
-            renderizarTablas();
+            confirmarDevolucion(prestamo.idTransaccion, prestamo.insumo); 
           });
 
           const btnMoroso = document.createElement("button");
           btnMoroso.className = "btn btn-warning btn-sm";
           btnMoroso.textContent = "Marcar moroso";
           btnMoroso.addEventListener("click", () => {
-             // Usa el ID de TRANSACCIÓN para la gestión
-            actualizarEstadoPrestamo(prestamo.idTransaccion, "moroso"); 
-            renderizarTablas();
+
+            confirmarMoroso(prestamo.idTransaccion, prestamo.insumo); 
           });
 
           div.append(btnDevolver, btnMoroso);
@@ -84,10 +136,7 @@ function renderizarTablas() {
           btnDevolver.className = "btn btn-success btn-sm";
           btnDevolver.textContent = "Marcar devuelto";
           btnDevolver.addEventListener("click", () => {
-            if (!confirm("¿Marcar este préstamo como devuelto?")) return;
-            // Usa el ID de TRANSACCIÓN para la gestión
-            marcarComoDevuelto(prestamo.idTransaccion); 
-            renderizarTablas();
+            confirmarDevolucion(prestamo.idTransaccion, prestamo.insumo); 
           });
           return btnDevolver;
         }

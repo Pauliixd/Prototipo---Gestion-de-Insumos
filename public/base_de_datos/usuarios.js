@@ -1,6 +1,6 @@
 // usuarios.js - Maneja el listado y acciones de la tabla de usuarios
 
-import { obtenerUsuarios, guardarUsuario, actualizarUsuario, eliminarUsuario } from "./bd.js";
+import { obtenerUsuarios, eliminarUsuario } from "./bd.js";
 
 import { crearTablaGeneral } from "./funciones.js";
 
@@ -43,7 +43,7 @@ function crearBotoneraAcciones(usuario) {
     return div;
 }
 
-function renderizarTablaUsuarios() {
+export function renderizarTablaUsuarios() {
     const usuarios = obtenerUsuarios();
     
     if (usuarios.length > 0) {

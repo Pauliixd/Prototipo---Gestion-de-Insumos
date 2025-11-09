@@ -6,7 +6,7 @@ const CLAVE_PRESTAMOS = "prestamos";
 const CLAVE_USUARIOS = "usuarios";
 const CLAVE_DESTINATARIOS = "destinatarios";
 
-function guardarArray(array, clave) {
+export function guardarArray(array, clave) {
   try {
     const datosString = JSON.stringify(array);
     localStorage.setItem(clave, datosString);
@@ -72,9 +72,35 @@ export function guardarUsuario(usuario) {
 
 export function actualizarUsuario(usuarioActualizado) {
   let usuarios = obtenerUsuarios();
-  const index = usuarios.findIndex(u => u.codigo == usuarioActualizado.codigo);
+  let index = -1;
+  let i = 0;
+
+  // Buscar el índice del usuario por su código
+  while (index === -1 && i < usuarios.length) {
+    if (usuarios[i].codigo == usuarioActualizado.codigo) {
+      index = i;
+    }
+    i++;
+  }
+  // Si se encontró el usuario, actualizarlo
   if (index !== -1) {
-    usuarios[index] = { ...usuarios[index], ...usuarioActualizado };
+    let usuario = usuarios[index];
+
+    // Actualiza cada campo 
+    if (usuarioActualizado.nombreYApellido !== undefined) {
+      usuario.nombreYApellido = usuarioActualizado.nombreYApellido;
+    }
+    if (usuarioActualizado.email !== undefined) {
+      usuario.email = usuarioActualizado.email;
+    }
+    if (usuarioActualizado.cargo !== undefined) {
+      usuario.cargo = usuarioActualizado.cargo;
+    }
+    if (usuarioActualizado.passwordSystem !== undefined) {
+      usuario.passwordSystem = usuarioActualizado.passwordSystem;
+    }
+
+    usuarios[index] = usuario;
     guardarArray(usuarios, CLAVE_USUARIOS);
     return true;
   }
@@ -113,9 +139,32 @@ export function guardarInsumo(insumo) {
 
 export function actualizarInsumo(insumoActualizado) {
   let insumos = obtenerInsumos();
-  const index = insumos.findIndex(i => i.codigo == insumoActualizado.codigo);
+  let index = -1;
+  let i = 0;
+  // Buscar el índice del insumo por su código
+  while (index === -1 && i < insumos.length) {
+    if (insumos[i].codigo == insumoActualizado.codigo) {
+      index = i;
+    }
+    i++;
+  }
+
+  // Si se encontró el insumo, actualizar sus datos
   if (index !== -1) {
-    insumos[index] = { ...insumos[index], ...insumoActualizado };
+    let insumo = insumos[index];
+
+    // Actualizar campo por campo (sin for...in)
+    if (insumoActualizado.nombre !== undefined) {
+      insumo.nombre = insumoActualizado.nombre;
+    }
+    if (insumoActualizado.estado !== undefined) {
+      insumo.estado = insumoActualizado.estado;
+    }
+    if (insumoActualizado.observacion !== undefined) {
+      insumo.observacion = insumoActualizado.observacion;
+    }
+
+    insumos[index] = insumo;
     guardarArray(insumos, CLAVE_INSUMOS);
     return true;
   }
@@ -195,13 +244,21 @@ export function obtenerPrestamosPorEstado() {
   };
 }
 
-/** Marca insumos como Prestado (igual que tenías) */
+/*Marca insumos como Prestado  */
 export function actualizarInsumosPrestados(insumosPrestados) {
   let insumos = obtenerInsumos();
-  insumosPrestados.forEach(prestado => {
-    const encontrado = insumos.find(i => i.codigo == prestado.codigo);
-    if (encontrado) encontrado.estado = "Prestado";
-  });
+
+  // Recorremos cada insumo prestado
+  for (let i = 0; i < insumosPrestados.length; i++) {
+    let codigoPrestado = insumosPrestados[i].codigo;
+
+    // Buscamos el insumo con ese código
+    for (let j = 0; j < insumos.length; j++) {
+      if (insumos[j].codigo == codigoPrestado) {
+        insumos[j].estado = "Prestado";
+      }
+    }
+  }
   guardarArray(insumos, CLAVE_INSUMOS);
 }
 

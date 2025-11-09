@@ -84,8 +84,6 @@ function abrirModalEditar(insumo) {
     // Implementar lógica para llenar el modal de edición
     document.getElementById('editCodigo').value = insumo.codigo;
     document.getElementById('editNombre').value = insumo.nombre;
-    // La categoria se fue, se elimina esta linea o se ajusta a lo que quede
-    // document.getElementById('editCategoria').value = insumo.categoria || '';
     document.getElementById('editEstado').value = insumo.estado;
     document.getElementById('editObservacion').value = insumo.observacion || '';
 
