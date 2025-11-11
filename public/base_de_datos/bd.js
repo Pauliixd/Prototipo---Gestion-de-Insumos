@@ -7,14 +7,9 @@ const CLAVE_USUARIOS = "usuarios";
 const CLAVE_DESTINATARIOS = "destinatarios";
 
 export function guardarArray(array, clave) {
-  try {
-    const datosString = JSON.stringify(array);
-    localStorage.setItem(clave, datosString);
-    return true;
-  } catch (error) {
-    console.error("Error al guardar en localStorage:", error);
-    return false;
-  }
+  const datosString = JSON.stringify(array);
+  localStorage.setItem(clave, datosString);
+  return true;
 }
 
 function obtenerArray(clave) {

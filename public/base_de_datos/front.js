@@ -32,7 +32,15 @@ const columnasInsumos = [
 ];
 
 // FUNCIONES
-const estadoActual = () => (selectEstado.value === "dispo");
+//const estadoActual = () => (selectEstado.value === "dispo"); 
+
+function estadoActual() {
+  if (selectEstado.value === "dispo") {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function obtenerInsumosSeleccionados() {
   // crearTablaGeneral no le pone ID, por eso se busca dentro de listaInsumos.
