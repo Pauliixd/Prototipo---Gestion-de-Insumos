@@ -128,23 +128,26 @@ function renderizarTablas() {
   }
 
   // MOROSOS
-  if (morososFiltrados.length > 0) {
-    contenedorMorosos.appendChild(
-      crearTablaGeneral(morososFiltrados, columnas, {
-        acciones: (prestamo) => {
-          const btnDevolver = document.createElement("button");
-          btnDevolver.className = "btn btn-success btn-sm";
-          btnDevolver.textContent = "Marcar devuelto";
-          btnDevolver.addEventListener("click", () => {
-            confirmarDevolucion(prestamo.idTransaccion, prestamo.insumo); 
-          });
-          return btnDevolver;
-        }
-      })
-    );
-  } else {
-    contenedorMorosos.innerHTML = "<p class='text-muted text-center'>No hay préstamos morosos.</p>";
-  }
+if (morososFiltrados.length > 0) {
+  const tablaMorosos = crearTablaGeneral(morososFiltrados, columnas, {
+    acciones: function (prestamo) {
+      const btnDevolver = document.createElement("button");
+      btnDevolver.className = "btn btn-success btn-sm";
+      btnDevolver.textContent = "Marcar devuelto";
+
+      btnDevolver.addEventListener("click", function () {
+        confirmarDevolucion(prestamo.idTransaccion, prestamo.insumo);
+      });
+
+      return btnDevolver;
+    }
+  });
+
+  contenedorMorosos.appendChild(tablaMorosos);
+} else {
+  contenedorMorosos.innerHTML = "<p class='text-muted text-center'>No hay préstamos morosos.</p>";
+}
+
 
   // HISTORIAL
   if (devueltosFiltrados.length > 0) {

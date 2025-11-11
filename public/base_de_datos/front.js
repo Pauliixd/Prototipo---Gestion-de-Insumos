@@ -32,7 +32,6 @@ const columnasInsumos = [
 ];
 
 // FUNCIONES
-//const estadoActual = () => (selectEstado.value === "dispo");
 
 function estadoActual() {
   if (selectEstado.value === "dispo") {
@@ -95,21 +94,21 @@ function actualizarContadores() {
   let prestados = 0;
   let enReparacion = 0;
 
-  for (let insumo of insumos) {
-    const estado = insumo.estado.toLowerCase();
+for (let i = 0; i < insumos.length; i++) {
+  const estado = insumos[i].estado.toLowerCase();
 
-    if (estado === "disponible") {
-      disponibles++;
-    } else if (estado === "prestado") {
-      prestados++;
-    } else if (estado === "fuera de servicio") {
-      enReparacion++;
-    }
+  if (estado === "disponible") {
+    disponibles++;
+  } else if (estado === "prestado") {
+    prestados++;
+  } else if (estado === "fuera de servicio") {
+    enReparacion++;
   }
+}
 
-  totalInsumos.textContent = disponibles;
-  insumosPrestados.textContent = prestados;
-  insumosReparacion.textContent = enReparacion;
+totalInsumos.textContent = disponibles;
+insumosPrestados.textContent = prestados;
+insumosReparacion.textContent = enReparacion;
 }
 
 
@@ -154,19 +153,20 @@ formPrestamo.addEventListener("submit", (e) => {
     return;
   }
 
-  insumosSeleccionados.forEach((insumo) => {
-    const nuevoPrestamo = {
-      // No se usa obtenerSiguienteCodigo() aquí. Se deja que bd.js lo asigne.
-      codigoInsumo: insumo.codigo, // Usar un nombre más claro
-      insumo: insumo.nombre,
-      destinatario: nombre,
-      fecha: fecha, // Esta es la fecha de préstamo
-      estado: "activo"
-      // La fecha límite se calcularía en la función de bd.js 
-    };
-    guardarPrestamo(nuevoPrestamo);
-    actualizarContadores();
-  });
+for (let i = 0; i < insumosSeleccionados.length; i++) {
+  const insumo = insumosSeleccionados[i];
+
+  const nuevoPrestamo = {
+    codigoInsumo: insumo.codigo, // Código del insumo
+    insumo: insumo.nombre,
+    destinatario: nombre,
+    fecha: fecha, // Fecha del préstamo
+    estado: "activo"
+  };
+
+  guardarPrestamo(nuevoPrestamo);
+  actualizarContadores();
+}
 
   actualizarInsumosPrestados(insumosSeleccionados);
 
