@@ -3,10 +3,10 @@
 export function crearTablaGeneral(datos, columnas, opciones) {
   const seleccionar = opciones && opciones.seleccionar;
   const acciones = opciones && opciones.acciones;
-
+// Se crea la tabla y se le agregan clases de estilo de Bootstrap
   const tabla = document.createElement("table");
   tabla.className = "table table-hover align-middle";
-
+// Se crean las secciones de encabezado y cuerpo de la tabla, se crea desde js y se inserta en html
   const thead = document.createElement("thead");
   const tbody = document.createElement("tbody");
   const trHead = document.createElement("tr");

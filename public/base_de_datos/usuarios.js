@@ -6,7 +6,7 @@ import { crearTablaGeneral } from "./funciones.js";
 
 // ELEMENTOS HTML
 const usuariosTableBody = document.getElementById("usuariosTableBody");
-
+// Configuración de columnas para la tabla de usuarios.
 const columnasUsuarios = [
     { clave: "nombreYApellido", texto: "Nombre y Apellido" },
     { clave: "dni", texto: "DNI" },
@@ -14,10 +14,11 @@ const columnasUsuarios = [
     { clave: "cargo", texto: "Cargo" },
 ];
 
-// FUNCIONES
+// // Crea los botones "Editar" y "Eliminar" para cada fila de usuario.
 function crearBotoneraAcciones(usuario) {
     const div = document.createElement('div');
     div.className = 'btn-group btn-group-sm';
+
 
     // Botón Editar
     const btnEditar = document.createElement('button');
@@ -42,14 +43,14 @@ function crearBotoneraAcciones(usuario) {
     div.appendChild(btnEliminar);
     return div;
 }
-
+//Se encarga de construir y mostrar la tabla con los datos actualizados
 export function renderizarTablaUsuarios() {
-    const usuarios = obtenerUsuarios();
+    const usuarios = obtenerUsuarios();//aca saca todos los usuarios que contiene
     
     if (usuarios.length > 0) {
-        
+        //Si hay usuarios, genera la tabla completa usando la función generica (crearTablaGeneral)
         const tablaCompleta = crearTablaGeneral(usuarios, columnasUsuarios, {
-            acciones: crearBotoneraAcciones
+            acciones: crearBotoneraAcciones// para cada fila de usuario crea un boton
         });
 
         // crearTablaGeneral devuelve un TABLE, obtenemos su TBODY:

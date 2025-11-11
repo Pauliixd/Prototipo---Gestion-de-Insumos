@@ -1,17 +1,18 @@
 // bd.js
 // BASE DE DATOS LOCAL
-
+// Esta hoja se encarga de gestionar los datos de insumos, préstamos, usuarios y destinatarios
 const CLAVE_INSUMOS = "insumos";
 const CLAVE_PRESTAMOS = "prestamos";
 const CLAVE_USUARIOS = "usuarios";
 const CLAVE_DESTINATARIOS = "destinatarios";
 
+// Guarda un array , lo convierte a texto (JSON)
 export function guardarArray(array, clave) {
-  const datosString = JSON.stringify(array);
-  localStorage.setItem(clave, datosString);
-  return true;
+  const datosString = JSON.stringify(array); // convierte el array a formato texto
+  localStorage.setItem(clave, datosString);   // guarda el texto con una clave específifica
+  return true; //se guardó correctamente
 }
-
+//si no hay nada guardado devuelve un array vacio
 function obtenerArray(clave) {
   const datos = JSON.parse(localStorage.getItem(clave));
   return datos ? datos : [];
@@ -19,7 +20,7 @@ function obtenerArray(clave) {
 
 // FUNCIÓN 1: CÓDIGO ALEATORIO (Para IDs de PRÉSTAMOS y Inicialización de Admin)
 export function obtenerCodigo() {
-  // Genera un ID de transacción aleatorio y único (para la gestión del préstamo)
+  // Devuelve un número entero aleatorio entre 0 y 999999
   return Math.floor(Math.random() * 1000000); 
 }
 
@@ -39,7 +40,7 @@ export function obtenerSiguienteCodigo() {
     return maxCodigo + 1;
 }
 
-// USUARIOS
+// Si no existen USUARIOS crea un usuario administrador por defecto
 export function obtenerUsuarios() {
   let usuarios = obtenerArray(CLAVE_USUARIOS);
   if (usuarios.length === 0) {
@@ -56,15 +57,15 @@ export function obtenerUsuarios() {
   }
   return usuarios;
 }
-
+//Guarda un nuevo usuario en el sistema
 export function guardarUsuario(usuario) {
   const usuarios = obtenerUsuarios();
   usuario.codigo = obtenerSiguienteCodigo(); // <-- Usa el INCREMENTAL
-  usuarios.push(usuario);
-  guardarArray(usuarios, CLAVE_USUARIOS);
+  usuarios.push(usuario);//agrega un nuevo usuario
+  guardarArray(usuarios, CLAVE_USUARIOS);//guardo todo el array actualizado noma
   return usuario;
 }
-
+//Actualiza los datos de un usuario
 export function actualizarUsuario(usuarioActualizado) {
   let usuarios = obtenerUsuarios();
   let index = -1;
@@ -95,21 +96,21 @@ export function actualizarUsuario(usuarioActualizado) {
       usuario.passwordSystem = usuarioActualizado.passwordSystem;
     }
 
-    usuarios[index] = usuario;
+    usuarios[index] = usuario; //reemplaza el usuario actualizado
     guardarArray(usuarios, CLAVE_USUARIOS);
     return true;
   }
   return false;
 }
-
+//elimina un usuario segun su codigo
 export function eliminarUsuario(codigo) {
   let usuarios = obtenerUsuarios();
-  const usuariosFiltrados = usuarios.filter(u => u.codigo != codigo);
+  const usuariosFiltrados = usuarios.filter(u => u.codigo != codigo);//este saca al usuario
   guardarArray(usuariosFiltrados, CLAVE_USUARIOS);
   return usuariosFiltrados.length !== usuarios.length;
 }
 
-// INSUMOS
+// INSUMOS  si no hay, crea por defecto
 export function obtenerInsumos() {
   let insumos = obtenerArray(CLAVE_INSUMOS);
   if (insumos.length === 0) {
@@ -148,7 +149,7 @@ export function actualizarInsumo(insumoActualizado) {
   if (index !== -1) {
     let insumo = insumos[index];
 
-    // Actualizar campo por campo (sin for...in)
+    // si lo encunetra actualiza los campos
     if (insumoActualizado.nombre !== undefined) {
       insumo.nombre = insumoActualizado.nombre;
     }
@@ -160,12 +161,12 @@ export function actualizarInsumo(insumoActualizado) {
     }
 
     insumos[index] = insumo;
-    guardarArray(insumos, CLAVE_INSUMOS);
+    guardarArray(insumos, CLAVE_INSUMOS);//aca se encarga de guardar los cambios
     return true;
   }
   return false;
 }
-
+// y aca nuevamente se encarga de eliminar por codigo
 export function eliminarInsumo(codigo) {
   let insumos = obtenerInsumos();
   const insumosFiltrados = insumos.filter(i => i.codigo != codigo);
@@ -266,7 +267,7 @@ export function obtenerDestinatarios() {
   }
   return destinatarios;
 }
-
+// Guarda un nuevo destinatario con código
 export function guardarDestinatario(destinatario) {
   const destinatarios = obtenerDestinatarios();
   destinatario.codigo = obtenerSiguienteCodigo(); // <-- Usa el INCREMENTAL
