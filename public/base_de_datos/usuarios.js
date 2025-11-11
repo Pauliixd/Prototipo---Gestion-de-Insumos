@@ -61,7 +61,7 @@ export function renderizarTablaUsuarios() {
     } else {
         usuariosTableBody.innerHTML = `<tr><td colspan="${columnasUsuarios.length + 1}" class="text-center text-muted">No hay usuarios registrados.</td></tr>`;
     }
-}
+}//j
 
 
 
