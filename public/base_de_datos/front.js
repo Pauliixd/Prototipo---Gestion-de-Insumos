@@ -32,7 +32,7 @@ const columnasInsumos = [
 ];
 
 // FUNCIONES
-//const estadoActual = () => (selectEstado.value === "dispo"); 
+//const estadoActual = () => (selectEstado.value === "dispo");
 
 function estadoActual() {
   if (selectEstado.value === "dispo") {
