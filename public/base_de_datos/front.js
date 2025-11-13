@@ -134,7 +134,7 @@ btnPrestamo.addEventListener("click", (e) => {
   }
   // Si hay insumos, el modal se abre por el data-bs-toggle
 });
-
+//CUANDO COMEMOS UNAS PIZZAS?
 // Al enviar el formulario de préstamo
 formPrestamo.addEventListener("submit", (e) => {
   e.preventDefault();

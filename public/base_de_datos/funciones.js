@@ -1,5 +1,5 @@
 // funciones.js
-
+//exporta una funcion que se encarga de crear la tabla general 
 export function crearTablaGeneral(datos, columnas, opciones) {
   const seleccionar = opciones && opciones.seleccionar;
   const acciones = opciones && opciones.acciones;
@@ -20,7 +20,7 @@ export function crearTablaGeneral(datos, columnas, opciones) {
 
   // Encabezados de columnas
   for (let i = 0; i < columnas.length; i++) {
-    const th = document.createElement("th");
+    const th = document.createElement("th");//crea un encabezado en html
     th.textContent = columnas[i].texto;
     trHead.appendChild(th);
   }
@@ -69,24 +69,24 @@ export function crearTablaGeneral(datos, columnas, opciones) {
 }
 
 // -----------------------------------------------------------------------
-
+//crea la funcion para buscar los insumos po
 export function buscarInsumo(insumos, valor) {
-  const texto = valor.trim().toLowerCase();
+  const texto = valor.trim().toLowerCase();//edlimina espacios para que sea mas eficiente la busqueda
   if (texto === "") {
-    return insumos;
+    return insumos;//si no escribe nada retorna todos los insusmos
   }
-
+//crea un array
   const resultado = [];
 
   for (let i = 0; i < insumos.length; i++) {
     const insumo = insumos[i];
     let nombre = "";
     if (insumo.nombre) {
-      nombre = insumo.nombre.toLowerCase();
+      nombre = insumo.nombre.toLowerCase();// lo capta en minuscula
     }
 
     if (nombre.includes(texto)) {
-      resultado.push(insumo);
+      resultado.push(insumo);//pushea el resultado al array que creamos arriba
     }
   }
 
@@ -94,24 +94,24 @@ export function buscarInsumo(insumos, valor) {
 }
 
 // -----------------------------------------------------------------------
-
+//crea una funcion de los insumos que se filtran por la busqueda
 export function filtrarTabla(insumos, texto) {
   const termino = texto.toLowerCase();
-  const filtrados = [];
+  const filtrados = [];//crea un array para los filtrados
 
   for (let i = 0; i < insumos.length; i++) {
-    const insumo = insumos[i];
+    const insumo = insumos[i];//recorre los insumos y los mete en una variable
 
     let nombre = "";
     let categoria = "";
     let estado = "";
 
-    if (insumo.nombre) {
+    if (insumo.nombre) {//si hay un insumo, se agrega a nombre la variable 
       nombre = insumo.nombre.toLowerCase();
-    }
+    }//idem con categoria
     if (insumo.categoria) {
       categoria = insumo.categoria.toLowerCase();
-    }
+    }//idem estado
     if (insumo.estado) {
       estado = insumo.estado.toLowerCase();
     }
@@ -120,7 +120,7 @@ export function filtrarTabla(insumos, texto) {
       nombre.includes(termino) ||
       categoria.includes(termino) ||
       estado.includes(termino)
-    ) {
+    ) {//guarda los texto de nombres,categorias y estado como texto
       filtrados.push(insumo);
     }
   }

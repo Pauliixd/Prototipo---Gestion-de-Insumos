@@ -17,7 +17,6 @@ function obtenerArray(clave) {
   const datos = JSON.parse(localStorage.getItem(clave));
   return datos ? datos : [];
 }
-
 // FUNCIÓN 1: CÓDIGO ALEATORIO (Para IDs de PRÉSTAMOS y Inicialización de Admin)
 export function obtenerCodigo() {
   // Devuelve un número entero aleatorio entre 0 y 999999
